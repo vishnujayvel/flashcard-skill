@@ -1,0 +1,55 @@
+# Example Output: Agile Project Management
+
+**Target Audience:** Project Managers, Product Owners, Team Leads
+**Topic:** Agile and Scrum methodology fundamentals
+**Note:** This is a synthetic example demonstrating skill output format.
+
+---
+
+## Flashcard Summary
+
+**Source:** Agile Project Management Fundamentals (Synthetic Example)
+**Tier:** Medium
+**Total Cards:** 14
+
+**Category Distribution:**
+- Problem Statement: 2 cards
+- Architecture: 3 cards
+- Components: 3 cards
+- Trade-offs: 3 cards
+- Failure Handling: 2 cards
+- Scaling: 1 card
+
+**Analogy Cards:** 4 (29%)
+
+---
+
+## Flashcards (Tab-Separated for Quizlet Import)
+
+---BEGIN FLASHCARDS---
+Why does Agile prefer working software over comprehensive documentation?	Documentation becomes outdated and doesn't prove the system works. Working software demonstrates real progress, surfaces issues early, and enables feedback loops. Document what's necessary for maintenance, not for approval theater.
+How would you explain a sprint using an analogy?	A sprint is like a cooking competition episode. You have fixed time (2 weeks), must deliver something complete (working dish/feature), can't change the challenge mid-episode, and get feedback from judges (stakeholders) at the end.
+What's the trade-off of shorter vs longer sprint lengths?	Shorter sprints (1 week) enable faster feedback but increase ceremony overhead and pressure. Longer sprints (4 weeks) allow larger features but delay feedback and risk scope creep. 2 weeks balances responsiveness with sustainable pace.
+Why does Scrum have a "potentially shippable increment" requirement?	It forces the team to complete work to production quality, not just "code complete." Incomplete work accumulates as hidden debt. Shippable increments prove real progress and enable release flexibility.
+What breaks if the Product Owner is unavailable during the sprint?	1) Developers make assumptions that may be wrong; 2) Blockers on requirements clarification stall work; 3) Acceptance criteria disputes appear at sprint end; 4) Sprint goal may drift from business needs.
+How would you explain story points using an analogy?	Story points are like rating hike difficulty. A "5-point" trail isn't 5 miles - it's 5 units of effort considering distance, elevation, terrain, and conditions combined. Teams calibrate their own scale through experience.
+What's the trade-off of Scrum vs Kanban for team workflow?	Scrum provides structure (sprints, roles, ceremonies) that helps new teams but can feel rigid. Kanban is more flexible (continuous flow, WIP limits) but requires discipline to avoid chaos. Mature teams often hybridize.
+Why do retrospectives happen every sprint instead of quarterly?	Frequent retrospectives catch problems while they're small and memories are fresh. Quarterly reviews let issues fester, make root causes harder to identify, and delay improvement. Continuous improvement requires continuous reflection.
+How would you explain the Scrum Master role using an analogy?	A Scrum Master is like a sports team's coach, not the captain. They don't play (do the work) or own strategy (Product Owner), but they train the team, remove obstacles, protect from distractions, and ensure the process works.
+What breaks if you skip sprint planning and just pull from the backlog?	1) No shared understanding of sprint goal; 2) Dependencies between stories are missed; 3) Capacity isn't considered (overcommitment); 4) Team lacks ownership of what they're building. Planning creates alignment, not just a task list.
+What's the trade-off of large vs small user stories?	Large stories reduce planning overhead but delay feedback, hide complexity, and are harder to estimate. Small stories enable flow and predictability but increase ceremony. Target stories completable in 1-3 days.
+Why does the daily standup have a 15-minute timebox?	Longer meetings become status reports to managers. Timeboxing forces conciseness (what I did, what I'll do, blockers) and moves detailed discussions offline. Standing up (literally) discourages tangents.
+How would you explain velocity using an analogy?	Velocity is like a runner tracking average pace. It's not a target to maximize - it's a measurement for prediction. Pressuring higher velocity is like telling a runner their "average" should be their "best." It leads to burnout or gaming.
+What breaks if velocity becomes a performance metric for individuals?	1) Estimates inflate to hit targets; 2) Team collaboration decreases (my points vs team success); 3) Technical debt increases (rush to close stories); 4) Story point meaning drifts. Velocity measures team flow, not individual productivity.
+---END FLASHCARDS---
+
+---
+
+## Usage Notes
+
+This example shows flashcards suitable for:
+- Scrum certification exam prep (CSM, PSM)
+- Team lead onboarding
+- Stakeholder education on Agile processes
+
+The cards focus on *why* Agile practices exist, not just *what* they are.

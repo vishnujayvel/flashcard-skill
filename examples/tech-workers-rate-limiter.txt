@@ -1,0 +1,59 @@
+# Example Output: Rate Limiter System Design
+
+**Target Audience:** Software Engineers / Tech Workers
+**Topic:** Designing a distributed rate limiting system
+**Note:** This is a synthetic example demonstrating skill output format.
+
+---
+
+## Flashcard Summary
+
+**Source:** Rate Limiter System Design (Synthetic Example)
+**Tier:** Deep
+**Total Cards:** 18
+
+**Category Distribution:**
+- Problem Statement: 2 cards
+- Architecture: 4 cards
+- Components: 3 cards
+- Trade-offs: 5 cards
+- Failure Handling: 2 cards
+- Scaling: 2 cards
+
+**Analogy Cards:** 4 (22%)
+
+---
+
+## Flashcards (Tab-Separated for Quizlet Import)
+
+---BEGIN FLASHCARDS---
+Why do APIs need rate limiting beyond just handling load?	Rate limiting protects against: 1) Denial of service attacks; 2) Noisy neighbor problems in multi-tenant systems; 3) Cost control for expensive operations; 4) Fair resource allocation across users.
+What's the trade-off of client-side vs server-side rate limiting?	Client-side is easily bypassed by malicious actors but reduces unnecessary network calls for honest clients. Server-side is authoritative but adds latency and load. Use both: client-side for UX, server-side for enforcement.
+How would you explain the token bucket algorithm using an analogy?	Token bucket is like a ticket dispenser at a deli counter. Tickets (tokens) refill at a steady rate. Customers take tickets to get served. If tickets run out, you wait. Burst traffic works if tickets accumulated; sustained overload gets throttled.
+Why might you choose sliding window over fixed window rate limiting?	Fixed windows have boundary problems - a user can exhaust limits at window end, then immediately at window start (2x burst). Sliding windows smooth this by considering a rolling time period, preventing boundary gaming.
+What's the trade-off of in-memory vs distributed rate limiting?	In-memory is fast with no network calls but doesn't work across multiple servers (users hit different instances). Distributed (Redis) provides global consistency but adds latency and a potential single point of failure.
+How would you explain the leaky bucket algorithm using an analogy?	Leaky bucket is like a funnel. Requests pour in at any rate, but output (processing) happens at a constant rate. The funnel (queue) absorbs bursts; if it overflows, excess requests are dropped.
+What breaks if your rate limiter uses eventual consistency?	Users might exceed limits during propagation delay between nodes. In a 100 req/sec limit with 3 nodes and 50ms sync delay, a coordinated attack could push 300 req/sec briefly. Use sticky sessions or accept some overage.
+Why separate rate limit rules by user tier, endpoint, and time window?	Different resources need different protection: login endpoints need tight limits (brute force prevention), read endpoints can be generous. Premium users expect higher limits. Multiple windows (per-second + per-day) prevent both bursts and sustained abuse.
+What's the trade-off of returning 429 immediately vs queuing requests?	Immediate 429 is simple and protects resources but creates poor UX for legitimate users. Queuing absorbs bursts gracefully but requires memory, timeout handling, and can mask actual overload. Hybrid: queue briefly, then reject.
+How would you explain rate limit headers using an analogy?	Rate limit headers are like a gas gauge. X-RateLimit-Remaining tells you how much fuel is left; X-RateLimit-Reset tells you when the tank refills. Clients can pace themselves instead of driving until empty and getting stranded.
+Why store rate limit counters in Redis rather than the application database?	Redis offers: 1) Sub-millisecond latency (critical for per-request checks); 2) Atomic increment operations; 3) Built-in TTL for automatic expiration; 4) Simpler ops than adding load to your primary DB.
+What pattern does the "circuit breaker with rate limiting" combination represent?	Defense in depth. Rate limiting prevents overload from request volume. Circuit breaker prevents cascade failures from slow/failing dependencies. Together they protect both inbound traffic and outbound dependency health.
+What's the trade-off of hard limits vs soft limits with degradation?	Hard limits (reject at threshold) are simple but create cliff effects. Soft limits (degrade quality - lower resolution, skip features) maintain availability but add complexity. Critical operations need hard limits; nice-to-haves can degrade.
+How would you explain distributed rate limiting coordination using an analogy?	It's like multiple bouncers at a club coordinating via radio. Each bouncer tracks local entries but periodically syncs counts. Small discrepancies are acceptable; the goal is approximate global fairness, not perfect accuracy.
+What breaks if rate limit Redis becomes unavailable?	Options: 1) Fail open (allow all requests) - vulnerable to abuse; 2) Fail closed (block all) - availability disaster; 3) Fall back to local in-memory limits - inconsistent but functional. Most choose fail-open with alerting.
+Why use consistent hashing for distributing rate limit data across Redis nodes?	Consistent hashing minimizes key redistribution when nodes are added/removed. With simple modulo hashing, losing one node reshuffles most keys, causing temporary limit resets. Consistent hashing only affects keys on the failed node.
+What's the trade-off of per-IP vs per-user rate limiting?	Per-IP is simple and works for unauthenticated traffic but punishes users behind NAT/VPN (shared IP). Per-user is fairer but requires authentication and doesn't stop pre-auth attacks like login brute force. Layer both.
+Why include jitter in rate limit retry headers?	Without jitter, all throttled clients retry at exactly X-RateLimit-Reset, causing a thundering herd. Adding random jitter (retry at reset + random 0-5s) spreads retries over time, smoothing the load spike.
+---END FLASHCARDS---
+
+---
+
+## Usage Notes
+
+This example shows flashcards suitable for:
+- System design interview preparation
+- Backend engineering deep-dives
+- API platform team knowledge sharing
+
+The cards emphasize trade-offs and failure modes - common interview focuses.

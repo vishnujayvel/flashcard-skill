@@ -1,0 +1,56 @@
+# Example Output: Database Indexing Fundamentals
+
+**Target Audience:** Computer Science Students
+**Topic:** Database indexing concepts for exams and interviews
+**Note:** This is a synthetic example demonstrating skill output format.
+
+---
+
+## Flashcard Summary
+
+**Source:** Database Indexing Fundamentals (Synthetic Example)
+**Tier:** Medium
+**Total Cards:** 15
+
+**Category Distribution:**
+- Problem Statement: 2 cards
+- Architecture: 3 cards
+- Components: 3 cards
+- Trade-offs: 4 cards
+- Failure Handling: 1 card
+- Scaling: 2 cards
+
+**Analogy Cards:** 4 (27%)
+
+---
+
+## Flashcards (Tab-Separated for Quizlet Import)
+
+---BEGIN FLASHCARDS---
+Why do databases need indexes instead of just scanning all rows?	Full table scans are O(n) - checking every row. Indexes provide O(log n) lookup by maintaining a sorted data structure, making queries orders of magnitude faster on large tables.
+How would you explain a B-tree index using an analogy?	A B-tree is like a library's card catalog system. Instead of searching every book, you go to the right drawer (branch), then the right section, then the right card - each step eliminates most possibilities.
+What's the trade-off of adding more indexes to a table?	More indexes speed up reads but slow down writes. Each INSERT/UPDATE/DELETE must update every index, consuming storage and I/O. Choose indexes based on query patterns, not just "index everything."
+Why do composite indexes have a "leftmost prefix" rule?	The index is sorted by columns in order (A, then B, then C). You can use (A), (A,B), or (A,B,C) efficiently, but not (B) or (C) alone - like a phone book sorted by last name then first name.
+What breaks if you index a column with low cardinality?	Low cardinality (few unique values like boolean or status) makes the index less selective. The database may skip the index entirely because scanning a large portion of the table isn't faster than a full scan.
+How would you explain index selectivity using an analogy?	Selectivity is like a filter's precision. A filter for "books published in 2023" narrows results significantly (high selectivity). A filter for "books with pages" matches almost everything (low selectivity, useless as a filter).
+What's the trade-off of clustered vs non-clustered indexes?	Clustered indexes store data in sorted order (only one per table, fast range scans). Non-clustered indexes store pointers to data (multiple allowed, extra lookup step). Choose clustered for your most common range query.
+Why does ORDER BY benefit from an index on that column?	Without an index, the database must sort all matching rows (expensive for large results). With an index, rows are already in order - the database just reads them sequentially.
+What pattern does a covering index represent?	A covering index includes all columns needed by a query, so the database reads only the index without touching the table. It trades storage for speed by duplicating data in the index.
+How would you explain a hash index using an analogy?	A hash index is like a coat check system. Your ticket number (hash) tells you exactly which hook has your coat - instant O(1) lookup. But you can't ask "give me all coats from hooks 10-20" (no range queries).
+What's the trade-off of hash indexes vs B-tree indexes?	Hash indexes offer O(1) exact lookups but don't support range queries or sorting. B-trees offer O(log n) lookups but support ranges, sorting, and prefix matching. Most databases default to B-trees for flexibility.
+Why do partial indexes improve performance?	Partial indexes only include rows matching a condition (e.g., WHERE status = 'active'). Smaller index = faster lookups, less storage, faster updates for rows outside the condition.
+What breaks if you create an index on a frequently updated column?	Every update to that column requires rebalancing the index structure. High-frequency updates cause index fragmentation, increased I/O, and potential lock contention.
+How would you explain index fragmentation using an analogy?	Fragmentation is like a filing cabinet where papers are inserted in random order. Eventually, retrieving related documents requires jumping around instead of reading sequentially - the physical order no longer matches the logical order.
+Why does EXPLAIN ANALYZE matter before adding indexes?	It shows the actual query execution plan and timing. Without it, you might add indexes the optimizer ignores, or miss that a different index would help more. Measure, don't guess.
+---END FLASHCARDS---
+
+---
+
+## Usage Notes
+
+This example shows flashcards suitable for:
+- Database course exam preparation
+- Technical interview prep (backend roles)
+- Self-study for SQL optimization
+
+The cards focus on understanding *why* rather than memorizing syntax.
