@@ -31,7 +31,7 @@ This skill takes a URL to any system design article, tutorial, or walkthrough an
 - Analyzes content structure and conceptual density
 - Extracts high-value system design concepts
 - Generates reasoning-focused flashcard questions
-- Outputs CSV format ready for Quizlet bulk import
+- Outputs tab-separated format ready for Quizlet bulk import
 
 **What this skill does NOT do:**
 - Produce summaries or synopses
@@ -45,7 +45,7 @@ This skill takes a URL to any system design article, tutorial, or walkthrough an
 /flashcard <URL>
 /flashcard <URL> --browser    (force Playwright for paywalled content)
 /flashcard <URL> --no-save    (skip saving to disk)
-/flashcard <URL> --format csv (save CSV only)
+/flashcard <URL> --format tsv (save TSV only)
 /flashcard <URL> --format md  (save Markdown only)
 /flashcard <URL> --save       (force save even if auto_save is off)
 ```
@@ -54,7 +54,7 @@ This skill takes a URL to any system design article, tutorial, or walkthrough an
 - `/flashcard https://systemdesignschool.io/problems/google-doc/solution`
 - `create flashcards from https://blog.bytebytego.com/p/designing-a-url-shortener`
 - `make flashcards https://medium.com/@article --browser`
-- `/flashcard https://example.com/article --format csv --no-save`
+- `/flashcard https://example.com/article --format tsv --no-save`
 
 ## Processing Phases
 
@@ -63,7 +63,7 @@ The skill processes content through five phases:
 1. **Content Fetching** → Retrieve and extract article content
 2. **Content Analysis** → Classify tier and identify concepts
 3. **Card Generation** → Create interview-focused Q&A pairs
-4. **Output Formatting** → Produce Quizlet-compatible CSV
+4. **Output Formatting** → Produce Quizlet-compatible TSV
 5. **Save to Disk** → Persist flashcards to XDG data directory
 
 ---
@@ -323,22 +323,21 @@ Before the flashcard block, output:
 
 ## Step 4.2: Format Flashcards for Quizlet Import
 
-Output flashcards in CSV format between clear delimiters:
+Output flashcards in tab-separated format between clear delimiters:
 
 ```
 ---BEGIN FLASHCARDS---
-"Why does [system] use [approach]?","[Answer with reasoning, trade-offs explained]"
-"What's the trade-off of [X] vs [Y]?","[Comparison: X provides A but costs B; Y provides C but costs D]"
-"How would you explain [concept] using an analogy?","[Concept] is like [analogy]. Just as [analogy detail], [technical mapping]."
-"What breaks if [component] fails?","1) [Impact 1]; 2) [Impact 2]; 3) [Mitigation]"
+Why does [system] use [approach]?	[Answer with reasoning, trade-offs explained]
+What's the trade-off of [X] vs [Y]?	[Comparison: X provides A but costs B; Y provides C but costs D]
+How would you explain [concept] using an analogy?	[Concept] is like [analogy]. Just as [analogy detail], [technical mapping].
+What breaks if [component] fails?	1) [Impact 1]; 2) [Impact 2]; 3) [Mitigation]
 ---END FLASHCARDS---
 ```
 
 **Format Rules:**
 - One card per line
-- Comma separates question and answer fields
-- Both fields wrapped in double quotes
-- Double quotes within fields escaped as `""` (standard CSV)
+- Tab character (`\t`) separates question and answer
+- No tabs within question or answer text
 - No markdown formatting within the flashcard block
 - Multi-point answers use semicolons or inline numbering (no newlines)
 - No blank lines within the flashcard block
@@ -365,9 +364,9 @@ After outputting flashcards to the conversation, persist them to the XDG data di
 Determine whether to save based on (in priority order):
 1. `--no-save` flag → skip saving entirely
 2. `--save` flag → force save regardless of config
-3. `--format csv|md|both` → override output format
+3. `--format tsv|md|both` → override output format
 4. Config `output.auto_save` (default: `true`) → save automatically
-5. Config `output.format` (default: `"both"`) → CSV + Markdown
+5. Config `output.format` (default: `"both"`) → TSV + Markdown
 
 Read config from `~/.claude/skills/flashcard-skill/config/defaults.json`.
 
@@ -386,9 +385,9 @@ mkdir -p ~/.local/share/flashcard-skill/cards/{topic-slug}
 
 ## Step 5.4: Write Files
 
-**Collision detection:** If `{date}.csv` or `{date}.md` already exists, append a sequence number: `{date}-2.csv`, `{date}-3.csv`, etc.
+**Collision detection:** If `{date}.tsv` or `{date}.md` already exists, append a sequence number: `{date}-2.tsv`, `{date}-3.tsv`, etc.
 
-**CSV format:** Same as Phase 4 output — one card per line, comma-separated with quoted fields. No header row.
+**TSV format:** Same as Phase 4 output — one card per line, tab-separated question and answer. No header row (Quizlet-compatible).
 
 **Markdown format:**
 ```markdown
@@ -424,7 +423,7 @@ Append an entry to `~/.local/share/flashcard-skill/index.json`:
   "card_count": 23,
   "generated": "2026-02-20",
   "files": {
-    "csv": "cards/topic-slug/2026-02-20.csv",
+    "tsv": "cards/topic-slug/2026-02-20.tsv",
     "markdown": "cards/topic-slug/2026-02-20.md"
   }
 }
@@ -438,7 +437,7 @@ After saving, display:
 
 ```
 Saved to disk:
-  CSV: ~/.local/share/flashcard-skill/cards/{topic-slug}/{date}.csv
+  TSV: ~/.local/share/flashcard-skill/cards/{topic-slug}/{date}.tsv
   MD:  ~/.local/share/flashcard-skill/cards/{topic-slug}/{date}.md
   Index updated (total: N sets)
 ```
@@ -466,13 +465,13 @@ Saved to disk:
 - What pattern does [approach] represent?
 
 ## Output Format
-- CSV (quoted `"question","answer"`)
+- Tab-separated (question\tanswer)
 - Delimited by `---BEGIN FLASHCARDS---` / `---END FLASHCARDS---`
 - No markdown within flashcard content
 
 ## Storage
 - **Data dir:** `~/.local/share/flashcard-skill/`
-- **Cards:** `cards/{topic-slug}/{date}.csv` + `.md`
+- **Cards:** `cards/{topic-slug}/{date}.tsv` + `.md`
 - **Index:** `index.json` (manifest of all saved sets)
 - **Config:** `~/.claude/skills/flashcard-skill/config/defaults.json`
 
@@ -482,6 +481,6 @@ Saved to disk:
 | `--browser` | Force Playwright for paywalled content |
 | `--no-save` | Skip saving to disk |
 | `--save` | Force save (overrides config) |
-| `--format csv` | Save CSV only |
+| `--format tsv` | Save TSV only |
 | `--format md` | Save Markdown only |
 | `--format both` | Save both (default) |
