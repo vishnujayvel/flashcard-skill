@@ -1,0 +1,123 @@
+# Flashcard-Skill Stickiness Tests
+# Tests that the skill activates correctly for flashcard generation from tutorials.
+#
+# Run: npx promptfoo eval -c stickiness.yaml
+# Expected pass rate: >= 80% activation, 100% rejection of non-flashcard tasks
+
+description: "Flashcard-skill stickiness: activation for tutorial-to-flashcard conversion"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-20250514
+    config:
+      systemPrompt: |
+        You are Claude Code with the flashcard-skill loaded.
+        The skill converts system design tutorials and technical content into
+        interview-ready flashcards optimized for Quizlet import. It extracts
+        key concepts, generates Q&A pairs, and formats output for spaced repetition.
+
+        Use this skill when user says 'make flashcards', 'create Quizlet cards',
+        'flashcard this tutorial', or wants to convert study material into cards.
+
+tests:
+  # --- Should Trigger Activations ---
+  - description: "Activation: direct 'make flashcards' command"
+    vars:
+      prompt: "make flashcards from this system design tutorial"
+    assert:
+      - type: llm-rubric
+        value: |
+          Does this response indicate the flashcard-skill has activated?
+          Signs: asks for tutorial content or URL, mentions flashcard generation,
+          discusses Q&A extraction or Quizlet format.
+
+  - description: "Activation: explicit Quizlet card creation"
+    vars:
+      prompt: "create Quizlet cards from this article"
+    assert:
+      - type: llm-rubric
+        value: |
+          Does this response show the skill engaging with Quizlet card generation?
+          Signs: begins flashcard extraction, mentions Quizlet import format,
+          asks for source material.
+
+  - description: "Activation: flashcard verb with tutorial context"
+    vars:
+      prompt: "flashcard this tutorial on distributed systems"
+    assert:
+      - type: llm-rubric
+        value: |
+          Does the flashcard-skill activate for tutorial processing?
+          Signs: discusses concept extraction, Q&A generation,
+          references system design flashcard creation.
+
+  - description: "Activation: convert-to-flashcards phrasing"
+    vars:
+      prompt: "convert this database fundamentals guide to flashcards"
+    assert:
+      - type: llm-rubric
+        value: |
+          Does the skill activate for guide-to-flashcard conversion?
+          Signs: asks for guide content, mentions flashcard extraction workflow,
+          discusses technical concept identification.
+
+  - description: "Activation: study cards for system design"
+    vars:
+      prompt: "make study cards for system design from this blog post"
+    assert:
+      - type: llm-rubric
+        value: |
+          Does the skill engage with system design study card creation?
+          Signs: discusses blog content extraction, flashcard generation,
+          system design concept identification.
+
+  - description: "Activation: interview prep flashcard context"
+    vars:
+      prompt: "I need flashcards for this caching strategies article to prep for interviews"
+    assert:
+      - type: llm-rubric
+        value: |
+          Does the skill activate for interview-focused flashcard generation?
+          Signs: begins flashcard extraction, mentions interview relevance,
+          discusses technical concept Q&A pairs.
+
+  - description: "Activation: Quizlet import format request"
+    vars:
+      prompt: "generate flashcards from this in Quizlet format"
+    assert:
+      - type: llm-rubric
+        value: |
+          Does the skill activate with Quizlet format specification?
+          Signs: discusses Quizlet CSV/import format, begins flashcard generation,
+          mentions field formatting for Quizlet.
+
+  # --- Should NOT Trigger (Wrong Skill) ---
+  - description: "Rejection: interactive quiz request (sd-arcade territory)"
+    vars:
+      prompt: "quiz me on system design"
+    assert:
+      - type: llm-rubric
+        value: |
+          Does this response AVOID activating the flashcard-skill?
+          Interactive quizzing is sd-arcade's domain, not flashcard generation.
+          Pass if the response suggests sd-arcade or starts an interactive quiz
+          instead of generating flashcards.
+
+  - description: "Rejection: study plan request (practice-tracker territory)"
+    vars:
+      prompt: "create a study plan for system design"
+    assert:
+      - type: llm-rubric
+        value: |
+          Does this response AVOID activating the flashcard-skill?
+          Study planning is practice-tracker's domain, not flashcard conversion.
+          Pass if the response addresses study planning without flashcard generation.
+
+  - description: "Rejection: note review request"
+    vars:
+      prompt: "review my system design notes"
+    assert:
+      - type: llm-rubric
+        value: |
+          Does this response AVOID activating the flashcard-skill?
+          Reviewing notes is different from converting them to flashcards.
+          Pass if the response discusses note review without starting flashcard extraction.

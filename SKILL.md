@@ -9,6 +9,9 @@ triggers:
   - make flashcards
 allowed-tools:
   - WebFetch
+  - Write
+  - Read
+  - Bash
   - mcp__playwright__browser_navigate
   - mcp__playwright__browser_snapshot
   - mcp__playwright__browser_press_key
@@ -40,22 +43,28 @@ This skill takes a URL to any system design article, tutorial, or walkthrough an
 
 ```
 /flashcard <URL>
-/flashcard <URL> --browser  (force Playwright for paywalled content)
+/flashcard <URL> --browser    (force Playwright for paywalled content)
+/flashcard <URL> --no-save    (skip saving to disk)
+/flashcard <URL> --format tsv (save TSV only)
+/flashcard <URL> --format md  (save Markdown only)
+/flashcard <URL> --save       (force save even if auto_save is off)
 ```
 
 **Examples:**
 - `/flashcard https://systemdesignschool.io/problems/google-doc/solution`
 - `create flashcards from https://blog.bytebytego.com/p/designing-a-url-shortener`
 - `make flashcards https://medium.com/@article --browser`
+- `/flashcard https://example.com/article --format tsv --no-save`
 
 ## Processing Phases
 
-The skill processes content through four phases:
+The skill processes content through five phases:
 
 1. **Content Fetching** → Retrieve and extract article content
 2. **Content Analysis** → Classify tier and identify concepts
 3. **Card Generation** → Create interview-focused Q&A pairs
 4. **Output Formatting** → Produce Quizlet-compatible TSV
+5. **Save to Disk** → Persist flashcards to XDG data directory
 
 ---
 
@@ -346,6 +355,95 @@ Formatting [n] flashcards for Quizlet import...
 
 ---
 
+# Phase 5: Save to Disk
+
+After outputting flashcards to the conversation, persist them to the XDG data directory.
+
+## Step 5.1: Check Save Behavior
+
+Determine whether to save based on (in priority order):
+1. `--no-save` flag → skip saving entirely
+2. `--save` flag → force save regardless of config
+3. `--format tsv|md|both` → override output format
+4. Config `output.auto_save` (default: `true`) → save automatically
+5. Config `output.format` (default: `"both"`) → TSV + Markdown
+
+Read config from `~/.claude/skills/flashcard-skill/config/defaults.json`.
+
+## Step 5.2: Derive Topic Slug
+
+Generate a topic slug from the article content:
+- Lowercase, hyphenated, 3-5 words
+- Derived from the article's primary subject matter
+- Examples: `client-server-communication`, `caching-strategies`, `rate-limiting-patterns`
+
+## Step 5.3: Create Directory
+
+```bash
+mkdir -p ~/.local/share/flashcard-skill/cards/{topic-slug}
+```
+
+## Step 5.4: Write Files
+
+**Collision detection:** If `{date}.tsv` or `{date}.md` already exists, append a sequence number: `{date}-2.tsv`, `{date}-3.tsv`, etc.
+
+**TSV format:** Same as Phase 4 output — one card per line, tab-separated question and answer. No header row (Quizlet-compatible).
+
+**Markdown format:**
+```markdown
+---
+source: "Article Title"
+tier: medium
+card_count: 16
+generated: 2026-02-20
+topic: topic-slug
+---
+# Flashcards: Article Title
+
+## Card 1 — Category
+**Q:** Question text
+**A:** Answer text
+
+---
+
+## Card 2 — Category
+**Q:** Question text
+**A:** Answer text
+```
+
+## Step 5.5: Update Index
+
+Append an entry to `~/.local/share/flashcard-skill/index.json`:
+
+```json
+{
+  "topic": "topic-slug",
+  "source": "Article Title",
+  "tier": "deep",
+  "card_count": 23,
+  "generated": "2026-02-20",
+  "files": {
+    "tsv": "cards/topic-slug/2026-02-20.tsv",
+    "markdown": "cards/topic-slug/2026-02-20.md"
+  }
+}
+```
+
+If `index.json` doesn't exist, create it as an array with this entry. If it exists, read, append, and write back.
+
+## Step 5.6: Confirm to User
+
+After saving, display:
+
+```
+Saved to disk:
+  TSV: ~/.local/share/flashcard-skill/cards/{topic-slug}/{date}.tsv
+  MD:  ~/.local/share/flashcard-skill/cards/{topic-slug}/{date}.md
+  Index updated (total: N sets)
+```
+
+---
+
 # Quick Reference
 
 ## Card Count by Tier
@@ -370,3 +468,19 @@ Formatting [n] flashcards for Quizlet import...
 - Tab-separated (question\tanswer)
 - Delimited by `---BEGIN FLASHCARDS---` / `---END FLASHCARDS---`
 - No markdown within flashcard content
+
+## Storage
+- **Data dir:** `~/.local/share/flashcard-skill/`
+- **Cards:** `cards/{topic-slug}/{date}.tsv` + `.md`
+- **Index:** `index.json` (manifest of all saved sets)
+- **Config:** `~/.claude/skills/flashcard-skill/config/defaults.json`
+
+## CLI Flags
+| Flag | Effect |
+|------|--------|
+| `--browser` | Force Playwright for paywalled content |
+| `--no-save` | Skip saving to disk |
+| `--save` | Force save (overrides config) |
+| `--format tsv` | Save TSV only |
+| `--format md` | Save Markdown only |
+| `--format both` | Save both (default) |

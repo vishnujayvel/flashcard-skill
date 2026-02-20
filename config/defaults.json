@@ -1,0 +1,24 @@
+{
+  "output": {
+    "base_dir": "~/.local/share/flashcard-skill",
+    "format": "both",
+    "auto_save": true,
+    "naming": "{topic}/{date}.{ext}"
+  },
+  "formats": {
+    "tsv": {
+      "include_header": false,
+      "quizlet_compatible": true
+    },
+    "markdown": {
+      "include_metadata": true,
+      "card_separator": "---",
+      "question_prefix": "**Q:**",
+      "answer_prefix": "**A:**"
+    }
+  },
+  "index": {
+    "enabled": true,
+    "file": "index.json"
+  }
+}
