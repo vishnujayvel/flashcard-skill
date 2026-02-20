@@ -6,9 +6,9 @@
     "naming": "{topic}/{date}.{ext}"
   },
   "formats": {
-    "tsv": {
+    "csv": {
       "include_header": false,
-      "quizlet_compatible": true
+      "quote_fields": true
     },
     "markdown": {
       "include_metadata": true,
