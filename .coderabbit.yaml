@@ -1,0 +1,26 @@
+language: "en-US"
+early_access: false
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  auto_review:
+    enabled: true
+    drafts: false
+  path_instructions:
+    - path: "SKILL.md"
+      instructions: >
+        This is a Claude Code Agent Skill file. Review against skill best practices:
+        frontmatter must have name + description, description should describe WHEN
+        to use (trigger conditions) not WHAT it does, file should be under 500 lines,
+        and any @ref/ links must resolve to existing files.
+    - path: "examples/**"
+      instructions: >
+        Example outputs. Check that they match the format described in SKILL.md
+        and demonstrate realistic use cases.
+
+chat:
+  auto_reply: true
