@@ -10,6 +10,10 @@
       "include_header": false,
       "quizlet_compatible": true
     },
+    "csv": {
+      "include_header": false,
+      "quote_fields": true
+    },
     "markdown": {
       "include_metadata": true,
       "card_separator": "---",

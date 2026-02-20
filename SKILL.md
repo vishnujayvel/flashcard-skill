@@ -44,10 +44,9 @@ This skill takes a URL to any system design article, tutorial, or walkthrough an
 ```
 /flashcard <URL>
 /flashcard <URL> --browser    (force Playwright for paywalled content)
-/flashcard <URL> --no-save    (skip saving to disk)
-/flashcard <URL> --format tsv (save TSV only)
-/flashcard <URL> --format md  (save Markdown only)
-/flashcard <URL> --save       (force save even if auto_save is off)
+/flashcard <URL> --no-save              (skip saving to disk)
+/flashcard <URL> --format tsv|csv|md|both  (override output format; default: tsv)
+/flashcard <URL> --save                 (force save even if auto_save is off)
 ```
 
 **Examples:**
@@ -364,7 +363,7 @@ After outputting flashcards to the conversation, persist them to the XDG data di
 Determine whether to save based on (in priority order):
 1. `--no-save` flag → skip saving entirely
 2. `--save` flag → force save regardless of config
-3. `--format tsv|md|both` → override output format
+3. `--format tsv|csv|md|both` → override output format
 4. Config `output.auto_save` (default: `true`) → save automatically
 5. Config `output.format` (default: `"both"`) → TSV + Markdown
 
@@ -481,6 +480,7 @@ Saved to disk:
 | `--browser` | Force Playwright for paywalled content |
 | `--no-save` | Skip saving to disk |
 | `--save` | Force save (overrides config) |
-| `--format tsv` | Save TSV only |
+| `--format tsv` | Save TSV only (default data format) |
+| `--format csv` | Save CSV only (quoted fields) |
 | `--format md` | Save Markdown only |
-| `--format both` | Save both (default) |
+| `--format both` | Save TSV + Markdown (default) |
